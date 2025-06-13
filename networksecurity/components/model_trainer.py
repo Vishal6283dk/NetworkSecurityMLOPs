@@ -28,6 +28,11 @@ from sklearn.ensemble import (
 import mlflow
 from urllib.parse import urlparse
 
+import dagshub
+dagshub.init(repo_owner='vishalgoyal25', repo_name='NetworkSecurityMLOPs', mlflow=True)
+
+
+
 
 class ModelTrainer:
     def __init__(self,model_trainer_config:ModelTrainerConfig,data_transformation_artifact:DataTransformationArtifact):
@@ -38,6 +43,8 @@ class ModelTrainer:
             raise NetworkSecurityException(e,sys)
         
     def track_mlflow(self,best_model,classificationmetric):
+
+        mlflow.set_registry_uri("https://dagshub.com/vishalgoyal25/NetworkSecurityMLOPs.mlflow")
 
         tracking_url_type_store = urlparse(mlflow.get_tracking_uri()).scheme
 
@@ -133,6 +140,9 @@ class ModelTrainer:
 
         Network_Model=NetworkModel(preprocessor=preprocessor,model=best_model)
         save_object(self.model_trainer_config.trained_model_file_path,obj=NetworkModel)
+        
+        
+
         #model pusher
         save_object("final_model/model.pkl",best_model)
         
